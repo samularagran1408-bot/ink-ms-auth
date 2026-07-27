@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: ink-ms-auth
+  
+  mail:
+    host: smtp.gmail.com
+    port: 465
+    username: samularagran1408@gmail.com
+    password: brbs bgir vbrc ymlc
+    protocol: smtps
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          starttls:
+            enable: false
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+  
+  datasource:
+    url: jdbc:mysql://localhost:3306/auth_ms?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: 
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format-sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+server:
+  port: 3001
+
+jwt:
+  secret: inklusport2024superSecretKeyForJWTtokenGenerationWith512bitsAlgorithmHS512
+  expiration: 86400000
+
+app:
+  password-reset:
+    mail-enabled: true
+    expose-token-in-response: false
+    token-expiry-hours: 24
+
+users:
+  service:
+    url: http://localhost:3002
+
+feign:
+  circuitbreaker:
+    enabled: true
+
+logging:
+  level:
+    com.inklusport.auth: DEBUG

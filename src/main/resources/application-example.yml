@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: ink-ms-auth
+  
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:465}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    protocol: ${MAIL_PROTOCOL:smtps}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          starttls:
+            enable: false
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+  
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/auth_ms?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format-sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+server:
+  port: ${SERVER_PORT:3001}
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:86400000}
+
+app:
+  password-reset:
+    mail-enabled: ${MAIL_ENABLED:true}
+    expose-token-in-response: ${EXPOSE_TOKEN:false}
+    token-expiry-hours: ${TOKEN_EXPIRY_HOURS:24}
+
+users:
+  service:
+    url: ${USERS_SERVICE_URL:http://localhost:3002}
+
+feign:
+  circuitbreaker:
+    enabled: ${FEIGN_CIRCUITBREAKER:true}
+
+logging:
+  level:
+    com.inklusport.auth: ${LOG_LEVEL:DEBUG}

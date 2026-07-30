@@ -48,6 +48,9 @@ app:
     expose-token-in-response: ${EXPOSE_TOKEN:false}
     token-expiry-hours: ${TOKEN_EXPIRY_HOURS:24}
 
+google:
+  client-id: ${GOOGLE_CLIENT_ID:}
+
 users:
   service:
     url: ${USERS_SERVICE_URL:http://localhost:3002}

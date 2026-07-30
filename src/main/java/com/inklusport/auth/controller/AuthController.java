@@ -2,6 +2,7 @@ package com.inklusport.auth.controller;
 
 import com.inklusport.auth.dto.AuthResponse;
 import com.inklusport.auth.dto.ForgotPasswordRequest;
+import com.inklusport.auth.dto.GoogleLoginRequest;
 import com.inklusport.auth.dto.LoginRequest;
 import com.inklusport.auth.dto.RegisterRequest;
 import com.inklusport.auth.dto.ResetPasswordRequest;
@@ -61,6 +62,19 @@ public class AuthController {
       return ResponseEntity.ok(response);
     } catch (Exception e) {
       return buildErrorResponse(e, "/api/auth/login");
+    }
+  }
+
+  /**
+   * Autentica con un ID token de Google Identity Services y devuelve un JWT propio.
+   */
+  @PostMapping("/google")
+  public ResponseEntity<?> loginWithGoogle(@Valid @RequestBody GoogleLoginRequest request, HttpServletRequest httpRequest) {
+    try {
+      AuthResponse response = authService.loginWithGoogle(request, getClientIp(httpRequest));
+      return ResponseEntity.ok(response);
+    } catch (Exception e) {
+      return buildErrorResponse(e, "/api/auth/google");
     }
   }
 

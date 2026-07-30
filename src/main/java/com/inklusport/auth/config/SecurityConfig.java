@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/register").permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/google").permitAll()
                         .requestMatchers("/api/auth/forgot-password").permitAll()
                         .requestMatchers("/api/auth/reset-password").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
@@ -72,7 +73,10 @@ public class SecurityConfig {
             "http://localhost:3002",
             "http://localhost:3003",
             "http://localhost:3004",
-            "http://localhost:3008"
+            "http://localhost:3008",
+            // Frontend Angular: 4200 en desarrollo (ng serve), 4300 servido por nginx
+            "http://localhost:4200",
+            "http://localhost:4300"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));

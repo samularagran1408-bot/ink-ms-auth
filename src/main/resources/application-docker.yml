@@ -30,6 +30,9 @@ app:
     expose-token-in-response: false
     token-expiry-hours: 24
 
+google:
+  client-id: ${GOOGLE_CLIENT_ID:}
+
 users:
   service:
     url: http://users-service:3002

@@ -91,6 +91,13 @@
             <scope>runtime</scope>
         </dependency>
         
+        <!-- Verificación local de ID tokens de Google Identity Services -->
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+
         <!-- Database -->
         <dependency>
             <groupId>com.mysql</groupId>

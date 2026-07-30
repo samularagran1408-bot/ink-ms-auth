@@ -1,7 +1,11 @@
 package com.inklusport.auth.client;
 
+import com.inklusport.auth.dto.CreateProfileFromRegisterRequest;
+import com.inklusport.auth.dto.UserProfileCreatedResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -15,4 +19,7 @@ public interface UserServiceClient {
 
     @GetMapping("/api/internal/users/roles-by-email")
     List<String> getUserRoles(@RequestParam("email") String email);
+
+    @PostMapping("/api/internal/users/profile-from-register")
+    UserProfileCreatedResponse createProfileFromRegister(@RequestBody CreateProfileFromRegisterRequest request);
 }

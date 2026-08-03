@@ -1,6 +1,7 @@
 package com.inklusport.auth.client;
 
 import com.inklusport.auth.dto.CreateProfileFromRegisterRequest;
+import com.inklusport.auth.dto.UserAccessStatusResponse;
 import com.inklusport.auth.dto.UserProfileCreatedResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -8,10 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Plan B cuando ink-ms-users no responde o el Circuit Breaker se abre.
- * Devuelve el rol USUARIO para que el login no se caiga.
- * El alta de perfil desde registro no tiene fallback silencioso: debe fallar
- * de forma controlada en AuthService para no dejar cuentas sin perfil.
+ * Plan B cuando ink-ms-users no responde.
  */
 @Component
 @Slf4j
@@ -21,6 +19,18 @@ public class UserServiceFallback implements UserServiceClient {
     public List<String> getUserRoles(String email) {
         log.warn(" Users MS no disponible. Asignando rol USUARIO");
         return List.of("USUARIO");
+    }
+
+    @Override
+    public UserAccessStatusResponse getAccessStatus(String email) {
+        // Fail-open controlado: si users-ms cae, auth sigue usando su propio isActive.
+        log.warn("Users MS no disponible al consultar access-status para {}", email);
+        return UserAccessStatusResponse.builder()
+                .email(email)
+                .allowed(true)
+                .active(true)
+                .message("Users MS no disponible; se omite verificación remota")
+                .build();
     }
 
     @Override

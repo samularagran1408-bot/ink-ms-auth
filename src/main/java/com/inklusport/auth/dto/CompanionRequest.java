@@ -7,8 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 /**
- * Datos del acompañante de apoyo. Obligatorio solo cuando el tipo de discapacidad
- * lo exige (MOTRIZ); opcional en el resto de casos.
+ * Datos del acompañante de apoyo. Obligatorio cuando el tipo de discapacidad
+ * lo exige (MOTRIZ o AUDITIVA); opcional en el resto de casos.
  */
 @Data
 public class CompanionRequest {

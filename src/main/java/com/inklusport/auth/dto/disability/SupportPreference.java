@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Preferencias de apoyo comunicativo para discapacidad auditiva.
- * El acompañante no es obligatorio; sí lo es declarar cómo prefiere recibir apoyo.
+ * Preferencias de apoyo comunicativo (p. ej. para discapacidad auditiva).
+ * Complementa los datos del acompañante cuando aplica.
  */
 public enum SupportPreference {
 

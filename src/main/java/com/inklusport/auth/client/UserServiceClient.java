@@ -1,6 +1,7 @@
 package com.inklusport.auth.client;
 
 import com.inklusport.auth.dto.CreateProfileFromRegisterRequest;
+import com.inklusport.auth.dto.UserAccessStatusResponse;
 import com.inklusport.auth.dto.UserProfileCreatedResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,9 @@ public interface UserServiceClient {
 
     @GetMapping("/api/internal/users/roles-by-email")
     List<String> getUserRoles(@RequestParam("email") String email);
+
+    @GetMapping("/api/internal/users/access-status")
+    UserAccessStatusResponse getAccessStatus(@RequestParam("email") String email);
 
     @PostMapping("/api/internal/users/profile-from-register")
     UserProfileCreatedResponse createProfileFromRegister(@RequestBody CreateProfileFromRegisterRequest request);

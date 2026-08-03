@@ -10,15 +10,30 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Esto es para manejar errores de validación de campos.
+     * Si no se devuelven errores de validación, el sistema no puede identificar que campos son requeridos.
+     * Esto hace que el sistema no pueda identificar que campos son requeridos.
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
-        String message = ex.getBindingResult().getFieldErrors().stream()
+        String fieldErrors = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
+        String globalErrors = ex.getBindingResult().getGlobalErrors().stream()
+                .map(error -> error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+        String message = Stream.of(fieldErrors, globalErrors)
+                .filter(part -> part != null && !part.isBlank())
+                .collect(Collectors.joining(", "));
+        if (message.isBlank()) {
+            message = "Datos de registro inválidos";
+        }
 
         ErrorResponse error = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())

@@ -31,7 +31,7 @@ public class RegisterRequest {
   private String disabilityType;
 
   /**
-   * Obligatorio si disabilityType = MOTRIZ; opcional en el resto.
+   * Obligatorio si disabilityType = MOTRIZ o AUDITIVA; opcional en el resto.
    */
   @Valid
   private CompanionRequest companion;

@@ -8,6 +8,7 @@ import com.inklusport.auth.dto.CreateProfileFromRegisterRequest;
 import com.inklusport.auth.dto.GoogleLoginRequest;
 import com.inklusport.auth.dto.LoginRequest;
 import com.inklusport.auth.dto.RegisterRequest;
+import com.inklusport.auth.dto.UserAccessStatusResponse;
 import com.inklusport.auth.dto.UserProfileCreatedResponse;
 import com.inklusport.auth.entity.AuthUser;
 import com.inklusport.auth.entity.LoginAttempt;
@@ -137,6 +138,8 @@ public class AuthService {
           throw new RuntimeException("Usuario inactivo");
       }
 
+      assertUserNotBlockedInUsersMs(request.getEmail());
+
       logLoginAttempt(request.getEmail(), ipAddress, true);
       log.info("Usuario autenticado: {}", user.getEmail());
 
@@ -173,6 +176,8 @@ public class AuthService {
     if (!Boolean.TRUE.equals(user.getIsActive())) {
       throw new RuntimeException("Usuario inactivo");
     }
+
+    assertUserNotBlockedInUsersMs(email);
 
     logLoginAttempt(email, ipAddress, true);
 
@@ -225,6 +230,23 @@ public class AuthService {
       
       log.info("Asignando rol USUARIO por defecto");
       return List.of("USUARIO");
+  }
+
+  /**
+   * RF28: respeta bloqueos temporales/permanentes definidos en users-ms.
+   */
+  private void assertUserNotBlockedInUsersMs(String email) {
+    UserAccessStatusResponse status;
+    try {
+      status = userServiceClient.getAccessStatus(email);
+    } catch (Exception ex) {
+      log.warn("No se pudo verificar access-status en Users MS para {}: {}", email, ex.getMessage());
+      return;
+    }
+    if (status != null && !status.isAllowed()) {
+      throw new RuntimeException(
+              status.getMessage() != null ? status.getMessage() : "Usuario bloqueado por administración");
+    }
   }
 
   /**

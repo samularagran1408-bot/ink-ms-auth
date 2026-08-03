@@ -45,8 +45,11 @@ public enum DisabilityType {
             .map(Enum::name)
             .collect(Collectors.toUnmodifiableSet());
 
+    /**
+     * Discapacidades graves que requieren datos de acompañante en el registro.
+     */
     public boolean requiresCompanion() {
-        return this == MOTRIZ;
+        return this == MOTRIZ || this == AUDITIVA;
     }
 
     /**

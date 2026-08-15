@@ -6,6 +6,7 @@ import com.inklusport.auth.dto.GoogleLoginRequest;
 import com.inklusport.auth.dto.LoginRequest;
 import com.inklusport.auth.dto.RegisterRequest;
 import com.inklusport.auth.dto.ResetPasswordRequest;
+import com.inklusport.auth.dto.VerifyResetCodeRequest;
 import com.inklusport.auth.dto.ErrorResponse;
 import com.inklusport.auth.security.JwtTokenProvider;
 import com.inklusport.auth.service.AuthService;
@@ -98,7 +99,17 @@ public class AuthController {
   @PostMapping("/forgot-password")
   public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
       passwordResetService.forgotPassword(request);
-      return ResponseEntity.ok(Map.of("message", "Si el email existe, recibirás instrucciones"));
+      return ResponseEntity.ok(Map.of("message", "Si el email existe, recibirás un código de 6 dígitos"));
+  }
+
+  /**
+   * Comprueba que el código de 6 dígitos sea válido y no haya expirado.
+   * No lo consume: el usuario aún debe definir la nueva contraseña.
+   */
+  @PostMapping("/verify-reset-code")
+  public ResponseEntity<?> verifyResetCode(@Valid @RequestBody VerifyResetCodeRequest request) {
+      passwordResetService.verifyResetCode(request.getToken());
+      return ResponseEntity.ok(Map.of("valid", true, "message", "Código válido"));
   }
 
   /**

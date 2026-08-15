@@ -1,5 +1,6 @@
 package com.inklusport.auth.service;
 
+import com.inklusport.auth.config.InvalidResetTokenException;
 import com.inklusport.auth.dto.ForgotPasswordRequest;
 import com.inklusport.auth.dto.ResetPasswordRequest;
 import com.inklusport.auth.dto.ForgotPasswordResponse;
@@ -63,14 +64,14 @@ public class PasswordResetService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
+    public void verifyResetCode(String code) {
+        requireValidToken(code);
+    }
+
     @Transactional
     public ResetPasswordResponse resetPassword(ResetPasswordRequest request) {
-        PasswordResetToken token = tokenRepository.findByTokenAndUsedFalse(request.getToken())
-                .orElseThrow(() -> new RuntimeException("Código inválido o expirado"));
-
-        if (token.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("El código ha expirado");
-        }
+        PasswordResetToken token = requireValidToken(request.getToken());
 
         AuthUser user = authUserRepository.findById(token.getUserId())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -86,6 +87,16 @@ public class PasswordResetService {
         return ResetPasswordResponse.builder()
                 .message("Contraseña actualizada correctamente")
                 .build();
+    }
+
+    private PasswordResetToken requireValidToken(String code) {
+        PasswordResetToken token = tokenRepository.findByTokenAndUsedFalse(code)
+                .orElseThrow(() -> new InvalidResetTokenException("Código inválido o expirado"));
+
+        if (token.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new InvalidResetTokenException("El código ha expirado");
+        }
+        return token;
     }
 
     /**

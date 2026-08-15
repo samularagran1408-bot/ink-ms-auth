@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/google").permitAll()
                         .requestMatchers("/api/auth/forgot-password").permitAll()
+                        .requestMatchers("/api/auth/verify-reset-code").permitAll()
                         .requestMatchers("/api/auth/reset-password").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/api/auth/logout").authenticated()

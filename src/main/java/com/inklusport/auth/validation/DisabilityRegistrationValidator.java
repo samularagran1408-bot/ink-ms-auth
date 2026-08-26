@@ -12,8 +12,9 @@ import java.util.Optional;
  * Reglas de registro inclusivo:
  * <ul>
  *   <li>Discapacidad opcional.</li>
- *   <li>MOTRIZ y AUDITIVA (graves): acompañante obligatorio (nombre + teléfono).</li>
- *   <li>Resto de tipos: acompañante opcional.</li>
+ *   <li>VISUAL, INTELECTUAL, COGNITIVA y MULTIPLE: acompañante obligatorio (nombre + teléfono).</li>
+ *   <li>MOTRIZ: acompañante opcional (depende del grado de afectación).</li>
+ *   <li>AUDITIVA y sin discapacidad: no se exige acompañante.</li>
  * </ul>
  */
 public class DisabilityRegistrationValidator
@@ -70,6 +71,9 @@ public class DisabilityRegistrationValidator
                 && isBlank(companion.getRelationship())
                 && isBlank(companion.getEmail());
         if (empty) {
+            return true;
+        }
+        if (!hasCompanion(companion)) {
             addViolation(context, "companion",
                     "Si registra un acompañante, complete al menos nombre y teléfono.");
             return false;

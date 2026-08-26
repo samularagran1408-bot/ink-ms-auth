@@ -31,7 +31,8 @@ public class RegisterRequest {
   private String disabilityType;
 
   /**
-   * Obligatorio si disabilityType = MOTRIZ o AUDITIVA; opcional en el resto.
+   * Obligatorio si disabilityType es VISUAL, INTELECTUAL, COGNITIVA o MULTIPLE.
+   * Opcional si es MOTRIZ. No se exige para AUDITIVA ni si no hay discapacidad.
    */
   @Valid
   private CompanionRequest companion;

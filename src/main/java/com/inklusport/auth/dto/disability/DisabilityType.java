@@ -46,10 +46,11 @@ public enum DisabilityType {
             .collect(Collectors.toUnmodifiableSet());
 
     /**
-     * Discapacidades graves que requieren datos de acompañante en el registro.
+     * Acompañante obligatorio: visual, intelectual, cognitiva y múltiple.
+     * Motriz es opcional; auditiva no lo requiere.
      */
     public boolean requiresCompanion() {
-        return this == MOTRIZ || this == AUDITIVA;
+        return this == VISUAL || this == INTELECTUAL || this == COGNITIVA || this == MULTIPLE;
     }
 
     /**

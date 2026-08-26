@@ -1,6 +1,7 @@
 package com.inklusport.auth.client;
 
 import com.inklusport.auth.dto.CreateProfileFromRegisterRequest;
+import com.inklusport.auth.dto.RecordUserActivityRequest;
 import com.inklusport.auth.dto.UserAccessStatusResponse;
 import com.inklusport.auth.dto.UserProfileCreatedResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -26,4 +27,7 @@ public interface UserServiceClient {
 
     @PostMapping("/api/internal/users/profile-from-register")
     UserProfileCreatedResponse createProfileFromRegister(@RequestBody CreateProfileFromRegisterRequest request);
+
+    @PostMapping("/api/internal/users/activity")
+    void recordActivity(@RequestBody RecordUserActivityRequest request);
 }

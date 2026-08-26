@@ -1,6 +1,7 @@
 package com.inklusport.auth.client;
 
 import com.inklusport.auth.dto.CreateProfileFromRegisterRequest;
+import com.inklusport.auth.dto.RecordUserActivityRequest;
 import com.inklusport.auth.dto.UserAccessStatusResponse;
 import com.inklusport.auth.dto.UserProfileCreatedResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -38,5 +39,12 @@ public class UserServiceFallback implements UserServiceClient {
         log.error("Users MS no disponible al crear perfil para {}", request.getEmail());
         throw new IllegalStateException(
                 "No fue posible crear el perfil de usuario. Intente nuevamente en unos momentos.");
+    }
+
+    @Override
+    public void recordActivity(RecordUserActivityRequest request) {
+        log.warn("Users MS no disponible al registrar actividad {} para {}",
+                request != null ? request.getAction() : null,
+                request != null ? request.getEmail() : null);
     }
 }

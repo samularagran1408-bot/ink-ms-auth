@@ -8,11 +8,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface AuthUserRepository extends JpaRepository<AuthUser, String> {
     
   Optional<AuthUser> findByEmail(String email);
+
+  List<AuthUser> findByEmailIn(Collection<String> emails);
   
   boolean existsByEmail(String email);
   

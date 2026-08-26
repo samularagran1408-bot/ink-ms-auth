@@ -3,6 +3,7 @@ package com.inklusport.auth.service;
 import com.inklusport.auth.client.UserServiceClient;
 import com.inklusport.auth.config.EmailAlreadyRegisteredException;
 import com.inklusport.auth.dto.AuthResponse;
+import com.inklusport.auth.dto.RecordUserActivityRequest;
 import com.inklusport.auth.dto.CompanionRequest;
 import com.inklusport.auth.dto.CreateProfileFromRegisterRequest;
 import com.inklusport.auth.dto.GoogleLoginRequest;
@@ -80,6 +81,8 @@ public class AuthService {
     }
 
     logLoginAttempt(request.getEmail(), ipAddress, true);
+    authUserRepository.updateLastLogin(request.getEmail(), LocalDateTime.now());
+    notifyUsersLogin(request.getEmail(), ipAddress, "register");
 
     String token = jwtTokenProvider.generateToken(user.getEmail(), List.of("USUARIO"));
 
@@ -148,6 +151,7 @@ public class AuthService {
 
       // 3. Actualizar último login
       authUserRepository.updateLastLogin(request.getEmail(), LocalDateTime.now());
+      notifyUsersLogin(request.getEmail(), ipAddress, "password");
 
       // 4. Generar token CON roles
       String token = jwtTokenProvider.generateToken(user.getEmail(), roles);
@@ -183,6 +187,7 @@ public class AuthService {
 
     List<String> roles = obtenerRolesConFallback(email);
     authUserRepository.updateLastLogin(email, LocalDateTime.now());
+    notifyUsersLogin(email, ipAddress, "google");
 
     String token = jwtTokenProvider.generateToken(email, roles);
     log.info("Usuario autenticado con Google: {}", email);
@@ -285,5 +290,18 @@ public class AuthService {
 
   private List<String> getDefaultRoles() {
       return List.of("USUARIO");
+  }
+
+  private void notifyUsersLogin(String email, String ipAddress, String method) {
+      try {
+          userServiceClient.recordActivity(RecordUserActivityRequest.builder()
+                  .email(email)
+                  .action("LOGIN")
+                  .details("{\"method\":\"" + method + "\"}")
+                  .ipAddress(ipAddress)
+                  .build());
+      } catch (Exception ex) {
+          log.warn("No se pudo registrar LOGIN en users-ms para {}: {}", email, ex.getMessage());
+      }
   }
 }

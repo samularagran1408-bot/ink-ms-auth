@@ -6,8 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface LoginAttemptRepository extends JpaRepository<LoginAttempt, String> {
+
+    List<LoginAttempt> findTop30ByEmailOrderByAttemptTimeDesc(String email);
     
     @Query("SELECT COUNT(l) FROM LoginAttempt l WHERE l.email = :email AND l.successful = false AND l.attemptTime > :since")
     long countRecentFailuresByEmail(@Param("email") String email, @Param("since") LocalDateTime since);

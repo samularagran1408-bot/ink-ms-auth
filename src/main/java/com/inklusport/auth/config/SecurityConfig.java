@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/forgot-password").permitAll()
                         .requestMatchers("/api/auth/verify-reset-code").permitAll()
                         .requestMatchers("/api/auth/reset-password").permitAll()
+                        .requestMatchers("/api/internal/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/api/auth/logout").authenticated()
                         .requestMatchers("/api/auth/validate").authenticated()

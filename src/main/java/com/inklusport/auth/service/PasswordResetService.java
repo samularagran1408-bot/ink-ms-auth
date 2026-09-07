@@ -19,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 
+/**
+ * Gestiona la solicitud, verificación y restablecimiento de contraseña.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -34,6 +37,9 @@ public class PasswordResetService {
 
     private static final SecureRandom random = new SecureRandom();
 
+    /**
+     * Genera y envía un código de recuperación si el email está registrado.
+     */
     @Transactional
     public ForgotPasswordResponse forgotPassword(ForgotPasswordRequest request) {
         String resetToken = null;
@@ -64,11 +70,17 @@ public class PasswordResetService {
                 .build();
     }
 
+    /**
+     * Comprueba que el código de recuperación sea válido y no esté expirado.
+     */
     @Transactional(readOnly = true)
     public void verifyResetCode(String code) {
         requireValidToken(code);
     }
 
+    /**
+     * Restablece la contraseña con un código válido y lo marca como usado.
+     */
     @Transactional
     public ResetPasswordResponse resetPassword(ResetPasswordRequest request) {
         PasswordResetToken token = requireValidToken(request.getToken());
@@ -89,6 +101,9 @@ public class PasswordResetService {
                 .build();
     }
 
+    /**
+     * Obtiene el token de recuperación o lanza si es inválido o expirado.
+     */
     private PasswordResetToken requireValidToken(String code) {
         PasswordResetToken token = tokenRepository.findByTokenAndUsedFalse(code)
                 .orElseThrow(() -> new InvalidResetTokenException("Código inválido o expirado"));

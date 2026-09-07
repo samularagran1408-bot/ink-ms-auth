@@ -97,6 +97,9 @@ public class AuthService {
             .build();
   }
 
+  /**
+   * Crea el perfil en users-ms a partir de los datos del registro.
+   */
   private void createUserProfileFromRegister(RegisterRequest request) {
     CompanionRequest companion = request.getCompanion();
 
@@ -117,6 +120,9 @@ public class AuthService {
     log.info("Perfil creado en users-ms: {} (disability={})", profile.getEmail(), profile.getDisability());
   }
 
+  /**
+   * Devuelve null si el valor está vacío; si no, el texto recortado.
+   */
   private String blankToNull(String value) {
     return value == null || value.isBlank() ? null : value.trim();
   }
@@ -288,10 +294,16 @@ public class AuthService {
     }
   }
 
+  /**
+   * Devuelve el rol por defecto {@code USUARIO}.
+   */
   private List<String> getDefaultRoles() {
       return List.of("USUARIO");
   }
 
+  /**
+   * Registra en users-ms la actividad de login (método e IP), sin fallar el flujo.
+   */
   private void notifyUsersLogin(String email, String ipAddress, String method) {
       try {
           userServiceClient.recordActivity(RecordUserActivityRequest.builder()

@@ -10,6 +10,9 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+/**
+ * Envía correos de autenticación, como el código de recuperación de contraseña.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -20,6 +23,9 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
+    /**
+     * Envía de forma asíncrona el código de recuperación de contraseña.
+     */
     @Async
     public void sendPasswordResetCode(String to, String code, int expiryMinutes) {
         try {
@@ -38,6 +44,9 @@ public class EmailService {
         }
     }
 
+    /**
+     * Construye el HTML del correo con el código y su vigencia.
+     */
     private String buildEmailContent(String code, int expiryMinutes) {
         return """
             <!DOCTYPE html>

@@ -22,6 +22,9 @@ public interface UserServiceClient {
     @GetMapping("/api/internal/users/roles-by-email")
     List<String> getUserRoles(@RequestParam("email") String email);
 
+    @GetMapping("/api/internal/users/id-by-email")
+    java.util.Map<String, String> getUserIdByEmail(@RequestParam("email") String email);
+
     @GetMapping("/api/internal/users/access-status")
     UserAccessStatusResponse getAccessStatus(@RequestParam("email") String email);
 

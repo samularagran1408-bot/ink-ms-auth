@@ -23,6 +23,12 @@ public class UserServiceFallback implements UserServiceClient {
     }
 
     @Override
+    public java.util.Map<String, String> getUserIdByEmail(String email) {
+        log.warn("Users MS no disponible. No se resolvió UUID para {}", email);
+        return java.util.Map.of();
+    }
+
+    @Override
     public UserAccessStatusResponse getAccessStatus(String email) {
         // Fail-open controlado: si users-ms cae, auth sigue usando su propio isActive.
         log.warn("Users MS no disponible al consultar access-status para {}", email);

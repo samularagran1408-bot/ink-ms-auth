@@ -43,16 +43,22 @@ public class JwtTokenProvider {
   }
 
   public String generateToken(String email, List<String> roles) {
+    return generateToken(email, roles, null);
+  }
+
+  public String generateToken(String email, List<String> roles, String userId) {
     Date now = new Date();
     Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
-    return Jwts.builder()
+    var builder = Jwts.builder()
       .setSubject(email)
       .claim("roles", roles)
       .setIssuedAt(now)
-      .setExpiration(expiryDate)
-      .signWith(key(), SignatureAlgorithm.HS512)
-      .compact();
+      .setExpiration(expiryDate);
+    if (userId != null && !userId.isBlank()) {
+      builder.claim("uid", userId);
+    }
+    return builder.signWith(key(), SignatureAlgorithm.HS512).compact();
   }
 
   /**
@@ -67,6 +73,16 @@ public class JwtTokenProvider {
       .parseClaimsJws(token)
       .getBody();
     return claims.getSubject();
+  }
+
+  public String getUserIdFromToken(String token) {
+    Claims claims = Jwts.parserBuilder()
+      .setSigningKey(key())
+      .build()
+      .parseClaimsJws(token)
+      .getBody();
+    Object uid = claims.get("uid");
+    return uid == null ? null : String.valueOf(uid);
   }
 
   /**

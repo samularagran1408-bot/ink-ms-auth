@@ -69,8 +69,9 @@ public class AuthService {
 
     authUserRepository.save(user);
 
+    String profileId;
     try {
-      createUserProfileFromRegister(request);
+      profileId = createUserProfileFromRegister(request);
     } catch (Exception ex) {
       // Compensa para no dejar credenciales huérfanas sin perfil.
       authUserRepository.delete(user);
@@ -84,7 +85,7 @@ public class AuthService {
     authUserRepository.updateLastLogin(request.getEmail(), LocalDateTime.now());
     notifyUsersLogin(request.getEmail(), ipAddress, "register");
 
-    String token = jwtTokenProvider.generateToken(user.getEmail(), List.of("USUARIO"));
+    String token = jwtTokenProvider.generateToken(user.getEmail(), List.of("USUARIO"), profileId);
 
     log.info("Nuevo usuario registrado: {}", user.getEmail());
 
@@ -100,7 +101,7 @@ public class AuthService {
   /**
    * Crea el perfil en users-ms a partir de los datos del registro.
    */
-  private void createUserProfileFromRegister(RegisterRequest request) {
+  private String createUserProfileFromRegister(RegisterRequest request) {
     CompanionRequest companion = request.getCompanion();
 
     CreateProfileFromRegisterRequest profileRequest = CreateProfileFromRegisterRequest.builder()
@@ -118,6 +119,21 @@ public class AuthService {
       throw new IllegalStateException("Users MS no confirmó la creación del perfil");
     }
     log.info("Perfil creado en users-ms: {} (disability={})", profile.getEmail(), profile.getDisability());
+    return profile.getId();
+  }
+
+  private String resolveUserId(String email) {
+    try {
+      var resolved = userServiceClient.getUserIdByEmail(email);
+      if (resolved == null) {
+        return null;
+      }
+      String id = resolved.get("id");
+      return (id == null || id.isBlank()) ? null : id.trim();
+    } catch (Exception e) {
+      log.warn("No se resolvió UUID de usuario para {}: {}", email, e.getMessage());
+      return null;
+    }
   }
 
   /**
@@ -160,7 +176,7 @@ public class AuthService {
       notifyUsersLogin(request.getEmail(), ipAddress, "password");
 
       // 4. Generar token CON roles
-      String token = jwtTokenProvider.generateToken(user.getEmail(), roles);
+      String token = jwtTokenProvider.generateToken(user.getEmail(), roles, resolveUserId(user.getEmail()));
       log.info("Token generado para {} con roles: {}", user.getEmail(), roles);
       log.info("Token: {}", token);
 
@@ -195,7 +211,7 @@ public class AuthService {
     authUserRepository.updateLastLogin(email, LocalDateTime.now());
     notifyUsersLogin(email, ipAddress, "google");
 
-    String token = jwtTokenProvider.generateToken(email, roles);
+    String token = jwtTokenProvider.generateToken(email, roles, resolveUserId(email));
     log.info("Usuario autenticado con Google: {}", email);
 
     return AuthResponse.builder()

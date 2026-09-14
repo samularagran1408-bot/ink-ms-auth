@@ -37,6 +37,12 @@ class JwtTokenProviderTest {
     }
 
     @Test
+    void generateToken_incluyeUidCuandoSeIndica() {
+        String token = jwtTokenProvider.generateToken("atleta@inklusport.test", List.of("USUARIO"), "user-uuid");
+        assertEquals("user-uuid", jwtTokenProvider.getUserIdFromToken(token));
+    }
+
+    @Test
     void validateToken_rechazaTokenRevocadoOInvalido() {
         String token = jwtTokenProvider.generateToken("atleta@inklusport.test", List.of("USUARIO"));
         tokenRevocationService.revokeToken(token);

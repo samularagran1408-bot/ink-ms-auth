@@ -86,7 +86,7 @@ class AuthServiceTest {
                         .email(request.getEmail())
                         .fullName("Ana")
                         .build());
-        when(jwtTokenProvider.generateToken(eq(request.getEmail()), anyList())).thenReturn("jwt-token");
+        when(jwtTokenProvider.generateToken(eq(request.getEmail()), anyList(), eq("user-1"))).thenReturn("jwt-token");
 
         AuthResponse response = authService.register(request, "127.0.0.1");
 
@@ -114,7 +114,7 @@ class AuthServiceTest {
 
         RuntimeException error = assertThrows(RuntimeException.class, () -> authService.login(request, "127.0.0.1"));
         assertEquals("Credenciales inválidas", error.getMessage());
-        verify(jwtTokenProvider, never()).generateToken(anyString(), anyList());
+        verify(jwtTokenProvider, never()).generateToken(anyString(), anyList(), any());
     }
 
     @Test
@@ -135,7 +135,8 @@ class AuthServiceTest {
         when(userServiceClient.getAccessStatus(request.getEmail()))
                 .thenReturn(UserAccessStatusResponse.builder().allowed(true).build());
         when(userServiceClient.getUserRoles(request.getEmail())).thenReturn(List.of("USUARIO"));
-        when(jwtTokenProvider.generateToken(request.getEmail(), List.of("USUARIO"))).thenReturn("jwt-ok");
+        when(userServiceClient.getUserIdByEmail(request.getEmail())).thenReturn(java.util.Map.of("id", "user-1"));
+        when(jwtTokenProvider.generateToken(request.getEmail(), List.of("USUARIO"), "user-1")).thenReturn("jwt-ok");
 
         AuthResponse response = authService.login(request, "127.0.0.1");
 
